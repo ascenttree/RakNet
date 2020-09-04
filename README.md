@@ -40,7 +40,7 @@ listener.events.on('encapsulatedPacket', (address: Address, packet: Encapsulated
 
 **`unconnectedPing`** - Fired when a client pings the server.
 ```ts
-listener.events.on('unconnectedPing', (address: Address, packet: UnconnectedPong, motd: MOTD) => {
+listener.events.on('unconnectedPing', (address: Address, motd: MOTD) => {
      motd.serverName = 'RaptorsMC';
 });
 ```

@@ -38,6 +38,9 @@ import OpenConnectionRequestTwo from "./protocol/OpenConnectionRequestTwo.ts";
 import OpenConnectionReplyTwo from "./protocol/OpenConnectionReplyTwo.ts";
 
 class Listener {
+     private SINGLE_TICK: number = 50;
+     private shutdown: boolean = false;
+     private shuttingDown: boolean = false;
      private socket!: Deno.DatagramConn;
      public events: EventEmitter;
      public connections: Map<string, Connection>;
@@ -49,7 +52,7 @@ class Listener {
           this.connections = new Map();
           this.port = 19132;
           this.events = new EventEmitter();
-          this.serverId = new DataView(idBuff, idBuff.byteOffset, idBuff.byteLength).getBigInt64(0);
+          this.serverId = new DataView(new Buffer(idBuff).buffer, idBuff.byteOffset, idBuff.byteLength).getBigInt64(0);
      }
 
      public async listen(address: string = '127.0.0.1', port: number = 19132): Promise<void> {
@@ -59,7 +62,7 @@ class Listener {
                port: port,
                transport: 'udp'
           });
-
+          this.tick();
           for await (const conn of this.socket) {
                const address = Address.from(conn[1]);
                const stream = new Buffer(conn[0]);
@@ -102,7 +105,7 @@ class Listener {
           packet.sendTimestamp = decodedPacket.sendTimestamp;
           packet.serverGUID = this.serverId;
 
-          this.events.emit('unconnectedPing', packet, motd);
+          this.events.emit('unconnectedPing', address, motd);
 
           packet.serverName = motd.toString();
           packet.write();
@@ -171,7 +174,37 @@ class Listener {
      }
 
      public sendBuffer(address: Address, buffer: Buffer): void {
-          this.socket.send(buffer, address.toDenoAddr());
+          try {
+               this.socket.send(buffer, address.toDenoAddr());
+          } catch (e) {
+               console.log('Address: ' + address.token, 'Buffer: ' + buffer.toString());
+               console.error(e);
+          }
+     }
+
+     public tick(): void {
+          let interval: number = setInterval(() => {
+               if (!this.shutdown) {
+                    for (let [_, connection]of this.connections) {
+                         connection.update(Date.now());
+                    }
+               } else {
+                    clearInterval(interval);
+                    this.stop();
+               }
+          }, this.SINGLE_TICK);
+     }
+
+     public stop(): void {
+          if (this.shuttingDown) {
+               return;
+          }
+          this.shuttingDown = true;
+          this.shutdown = true;
+          for (let [_, connection]of this.connections) {
+               this.closeConnection(connection, 'RakNet Shutdown');
+          }
+          return this.socket.close();
      }
 }
 export default Listener;

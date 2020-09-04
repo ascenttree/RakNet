@@ -1,5 +1,6 @@
 import Packet from './Packet.ts';
 import Buffer from 'https://deno.land/std/node/buffer.ts';
+import { convertBinaryStringToUint8Array } from '../utils/Utilities.ts';
 
 const MAGIC: string = '\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x12\x34\x56\x78';
 class OfflinePacket extends Packet {
@@ -10,7 +11,7 @@ class OfflinePacket extends Packet {
      }
 
      public writeMagic(): void {
-          this.append(Buffer.from(MAGIC, 'binary'));
+          this.append(new Buffer(convertBinaryStringToUint8Array(MAGIC)));
      }
 
      get valid(): boolean {

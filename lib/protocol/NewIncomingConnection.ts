@@ -1,5 +1,6 @@
 import Packet from './Packet.ts';
 import Identifiers from './Identifiers.ts';
+import Address from '../utils/Address.ts';
 
 class NewIncomingConnection extends Packet {
      public address!: Address;

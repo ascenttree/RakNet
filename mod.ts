@@ -18,6 +18,10 @@
  * @license RaptorsMC/CustomLicense
  */
 export * from './lib/utils/Utilities.ts';
-export { default as Listener } from './lib/Listener.ts';
+export { default as Address } from './lib/utils/Address.ts';
 export { default as Collection } from './lib/utils/Collection.ts';
 export { default as MOTD } from './lib/utils/MOTD.ts';
+// Lib
+export { default as Listener } from './lib/Listener.ts';
+export { default as Connection } from './lib/connection/Connection.ts';
+export { Protocol as Protocol } from './lib/protocol/Protocol.ts';
