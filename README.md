@@ -13,17 +13,17 @@ Listener handles connections for you, for listening to events, you need to hook 
 - Event cancellation
 
 ##### Events
-**`connectionCreated`** - Fired when a connection is established.
+**`connectionCreated`** - Fired when a connection is established and is requesting Connection sequence.
 ```ts
 listener.events.on('connectionCreated', (connection: Connection) => {});
 ```
 
-**`connectionAccepted`** - Fired when a connection is added to the listener, and finishes ACK sequence.
+**`connectionAccepted`** - Fired when a connection is added to the listener, and finishes Connection sequence.
 ```ts
 listener.events.on('connectionAccepted', (connection: Connection) => {});
 ```
 
-**`connectionKicked`** - Fired if a connection fails ACK sequence.
+**`connectionKicked`** - Fired if a connection fails Connection sequence for any reason.
 ```ts
 listener.events.on('connectionKicked', (address: Address) => {});
 ```

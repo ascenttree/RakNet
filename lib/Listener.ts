@@ -44,47 +44,61 @@ class Listener {
      private socket!: Deno.DatagramConn;
      public events: EventEmitter;
      public connections: Map<string, Connection>;
+     public address: string;
      public port: number;
      public serverId: bigint;
 
      constructor() {
           let idBuff: Uint8Array = randomBytes(8);
           this.connections = new Map();
+          this.address = '127.0.0.1';
           this.port = 19132;
           this.events = new EventEmitter();
           this.serverId = new DataView(new Buffer(idBuff).buffer, idBuff.byteOffset, idBuff.byteLength).getBigInt64(0);
      }
 
      public async listen(address: string = '127.0.0.1', port: number = 19132): Promise<void> {
+          this.address = address;
           this.port = port;
+
+          //Deno.net i need to expose this
+          
           this.socket = Deno.listenDatagram({
                hostname: address,
                port: port,
                transport: 'udp'
           });
           this.tick();
-          for await (const conn of this.socket) {
-               const address = Address.from(conn[1]);
-               const stream = new Buffer(conn[0]);
-               // Read packet header
-               let header: number = stream.readUInt8();
-               
-               if (this.connections.has(address.token)) {
-                    let connection: Connection = this.connections.get(address.token) as Connection;
-                    connection.recieve(stream);
-               } else {
-                    // Query
-                    switch(header) {
-                         case Identifiers.UnconnectedPing:
-                              this.handleUnconnectedPing(address, stream);
-                         break;
-                         case Identifiers.OpenConnectionRequest1:
-                              this.handleOpenConnectionRequest1(address, stream);
-                         break;
-                         case Identifiers.OpenConnectionRequest2:
-                              this.handleOpenConnectionRequest2(address, stream);
-                         break;
+          try {
+               for await (const conn of this.socket) {
+                    const address = Address.from(conn[1]);
+                    const stream = new Buffer(conn[0]);
+                    // Read packet header
+                    let header: number = stream.readUInt8();
+                    
+                    if (this.connections.has(address.token)) {
+                         let connection: Connection = this.connections.get(address.token) as Connection;
+                         connection.recieve(stream);
+                    } else {
+                         // Query
+                         switch(header) {
+                              case Identifiers.UnconnectedPing:
+                                   this.handleUnconnectedPing(address, stream);
+                              break;
+                              case Identifiers.OpenConnectionRequest1:
+                                   console.log(`${address.token}: Connecting....`)
+                                   this.handleOpenConnectionRequest1(address, stream);
+                              break;
+                              case Identifiers.OpenConnectionRequest2:
+                                   this.handleOpenConnectionRequest2(address, stream);
+                              break;
+                         }
                     }
+               }
+          } catch (e) {
+               console.error(e);
+               if (!this.shutdown) {
+                    return;
                }
           }
      }
