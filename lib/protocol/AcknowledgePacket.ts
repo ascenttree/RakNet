@@ -1,4 +1,4 @@
-import { BinaryStream } from '../../incl/BinaryUtils/mod.ts';
+import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
 import Packet from './Packet.ts';
 const MaxAcknowledgePackets: number = 4096;
 class AcknowledgePacket extends Packet {

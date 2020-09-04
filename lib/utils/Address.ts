@@ -25,7 +25,7 @@ class Address {
       * Gets the ip of the address
       */
      public get ip(): string {
-          return this.ip;
+          return this._ip;
      }
 
      /**
@@ -57,4 +57,16 @@ class Address {
      public get token(): string {
           return this.ip + ':' + this.port;
      }
+
+     /**
+      * Converts to deno address for sending.
+      */
+     public toDenoAddr(): Deno.Addr {
+          return {
+               hostname: this.ip,
+               port: this.port,
+               transport: 'udp'
+          }
+     }
 }
+export default Address;
