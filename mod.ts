@@ -25,3 +25,5 @@ export { default as MOTD } from './lib/utils/MOTD.ts';
 export { default as Listener } from './lib/Listener.ts';
 export { default as Connection } from './lib/connection/Connection.ts';
 export { Protocol as Protocol } from './lib/protocol/Protocol.ts';
+// Packets
+export { default as EncapsulatedPacket } from './lib/protocol/EncapsulatedPacket.ts';

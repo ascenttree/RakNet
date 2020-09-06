@@ -57,7 +57,7 @@ class Listener {
           this.serverId = new DataView(new Buffer(idBuff).buffer, idBuff.byteOffset, idBuff.byteLength).getBigInt64(0);
      }
 
-     public async listen(address: string = '127.0.0.1', port: number = 19132): Promise<void> {
+     public async listen(address: string = '127.0.0.1', port: number = 19132, byteLength: number = 2048): Promise<void> {
           this.address = address;
           this.port = port;
 
@@ -69,13 +69,16 @@ class Listener {
                transport: 'udp'
           });
           this.tick();
-          try {
-               for await (const conn of this.socket) {
+          let listening = true;
+          while (!this.shutdown) {
+               try {
+                    const conn = await this.socket.receive(new Uint8Array(byteLength));
                     const address = Address.from(conn[1]);
                     const stream = new Buffer(conn[0]);
                     // Read packet header
                     let header: number = stream.readUInt8();
-                    
+                    console.log(header);
+
                     if (this.connections.has(address.token)) {
                          let connection: Connection = this.connections.get(address.token) as Connection;
                          connection.recieve(stream);
@@ -86,7 +89,6 @@ class Listener {
                                    this.handleUnconnectedPing(address, stream);
                               break;
                               case Identifiers.OpenConnectionRequest1:
-                                   console.log(`${address.token}: Connecting....`)
                                    this.handleOpenConnectionRequest1(address, stream);
                               break;
                               case Identifiers.OpenConnectionRequest2:
@@ -94,12 +96,15 @@ class Listener {
                               break;
                          }
                     }
+               } catch (e) {
+                    // ignore errors, we're not clowns :)
+                    console.log(e);
                }
-          } catch (e) {
-               console.error(e);
-               if (!this.shutdown) {
-                    return;
-               }
+          }
+          listening = false;
+
+          if (listening === false) {
+               console.log('What the fuck?')
           }
      }
 
@@ -180,15 +185,16 @@ class Listener {
      }
 
      public closeConnection(connection: Connection, reason: string): void {
+          this.events.emit('connectionKicked', connection.address, reason);
           if (this.connections.has(connection.address.token)) {
                connection.close();
                this.connections.delete(connection.address.token);
           }
-          this.events.emit('connectionDestroyed', connection.address, reason);
      }
 
-     public sendBuffer(address: Address, buffer: Buffer): void {
+     public async sendBuffer(address: Address, buffer: Buffer): Promise<void> {
           try {
+               console.log('Sent packet to address');
                this.socket.send(buffer, address.toDenoAddr());
           } catch (e) {
                console.log('Address: ' + address.token, 'Buffer: ' + buffer.toString());
@@ -198,6 +204,7 @@ class Listener {
 
      public tick(): void {
           let interval: number = setInterval(() => {
+               console.log('still updating');
                if (!this.shutdown) {
                     for (let [_, connection]of this.connections) {
                          connection.update(Date.now());

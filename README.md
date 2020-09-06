@@ -25,12 +25,12 @@ listener.events.on('connectionAccepted', (connection: Connection) => {});
 
 **`connectionKicked`** - Fired if a connection fails Connection sequence for any reason.
 ```ts
-listener.events.on('connectionKicked', (address: Address) => {});
+listener.events.on('connectionKicked', (address: Address, reason: string) => {});
 ```
 
-**`connectionDestroyed`** - Fired when a connection leaves or is disconnected.
+**`connectionDestroyed`** - Fired when a connection is terminated, this can not be cancelled.
 ```ts
-listener.events.on('connectionDestroyed', (address: Address, reason: string) => {});
+listener.events.on('connectionDestroyed', (address: Address) => {});
 ```
 
 **`encapsulatedPacket`** - Fired when a connection sends a Encapsulated Packet to the server.
