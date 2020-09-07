@@ -69,7 +69,6 @@ class Listener {
                transport: 'udp'
           });
           this.tick();
-          let listening = true;
           while (!this.shutdown) {
                try {
                     const conn = await this.socket.receive(new Uint8Array(byteLength));
@@ -98,13 +97,7 @@ class Listener {
                     }
                } catch (e) {
                     // ignore errors, we're not clowns :)
-                    console.log(e);
                }
-          }
-          listening = false;
-
-          if (listening === false) {
-               console.log('What the fuck?')
           }
      }
 
@@ -194,7 +187,6 @@ class Listener {
 
      public async sendBuffer(address: Address, buffer: Buffer): Promise<void> {
           try {
-               console.log('Sent packet to address');
                this.socket.send(buffer, address.toDenoAddr());
           } catch (e) {
                console.log('Address: ' + address.token, 'Buffer: ' + buffer.toString());
@@ -204,7 +196,6 @@ class Listener {
 
      public tick(): void {
           let interval: number = setInterval(() => {
-               console.log('still updating');
                if (!this.shutdown) {
                     for (let [_, connection]of this.connections) {
                          connection.update(Date.now());

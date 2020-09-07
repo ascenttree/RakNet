@@ -152,16 +152,12 @@ class Connection {
 
           if ((header & BitFlags.Valid) === 0) {
                // Recieved an offline packet
-               console.log('Packet is offline!');
                return;
           } else if (header & BitFlags.Ack) {
-               console.log('Packet was ACK');
                return this.handleACK(buf);
           } else if (header & BitFlags.Nack) {
-               console.log('Packet was NACK');
                return this.handleNACK(buf);
           } else {
-               console.log('Packet was DataGram');
                return this.handleDatagram(buf);
           }
      }
@@ -170,10 +166,8 @@ class Connection {
           let dpk: DataPacket = new DataPacket();
           dpk.buffer = buf;
           dpk.read();
-
           if (dpk.sequenceNumber < this.windowStart || dpk.sequenceNumber > this.windowEnd || this.recievedWindow.includes(dpk.sequenceNumber)) {
                // Check if the packet is handled.
-               console.log('I already recieved this packet.')
                return;
           }
 
@@ -204,7 +198,7 @@ class Connection {
           }
 
           for (let pk of dpk.packets) {
-               this.recievePacket(pk as EncapsulatedPacket);
+               this.receivePacket(pk as EncapsulatedPacket);
           }
      }
 
@@ -241,10 +235,9 @@ class Connection {
           }
      }
 
-     public recievePacket(packet: Packet|EncapsulatedPacket): void {
+     public receivePacket(packet: Packet|EncapsulatedPacket): void {
           if (packet.messageIndex === undefined) {
                // Handle directly because theres no index. (not encapsulated)
-               console.log('Not Encapsulated');
                this.handlePacket(packet);
           } else {
                if (packet.messageIndex < this.reliableWindowStart || packet.messageIndex > this.reliableWindowEnd) {
@@ -373,8 +366,7 @@ class Connection {
 
           let id: number = packet.buffer.readUInt8();
           let dataPacket, pk, sendPacket: DataPacket|OfflinePacket|Packet|EncapsulatedPacket;
-          console.log(id);
-          console.log(id < 0x80);
+          
           if (id < 0x80) {
                if (this.state === Status.Connecting) {
                     if (id === Identifiers.ConnectionRequest) {
@@ -392,7 +384,6 @@ class Connection {
                          sendPacket.reliability = 0;
                          sendPacket.buffer = pk.buffer;
                          this.addToQueue(sendPacket, Priority.Immediate);
-                         console.log('Attempted to allow connection...');
                     } else if (id === Identifiers.NewIncomingConnection) {
                          dataPacket = new NewIncomingConnection();
                          dataPacket.buffer = packet.buffer;
@@ -449,7 +440,7 @@ class Connection {
                this.splitPackets.delete(packet.splitID);
 
                pk.buffer = stream.buffer;
-               this.recievePacket(pk);
+               this.receivePacket(pk);
           }
      }
 
@@ -464,6 +455,7 @@ class Connection {
      }
 
      public sendPacket(pk: Packet): void {
+          pk.write();
           this.listener.sendBuffer(this.address, pk.buffer);// send to connection.
      }
 
