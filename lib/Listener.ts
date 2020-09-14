@@ -21,7 +21,7 @@ import Address from './utils/Address.ts';
 import Connection from './connection/Connection.ts';
 import Buffer from 'https://deno.land/std/node/buffer.ts';
 import EventEmitter from 'https://deno.land/std@0.67.0/node/events.ts';
-import { BinaryStream,  } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
+import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
 import { randomBytes } from './utils/Utilities.ts';
 import UnconnectedPing from './protocol/UnconnectedPing.ts';
 import UnconnectedPong from './protocol/UnconnectedPong.ts';
