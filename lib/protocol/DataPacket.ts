@@ -2,7 +2,7 @@ import BitFlags from './BitFlags.ts';
 import Buffer from 'https://deno.land/std/node/buffer.ts';
 import Packet from './Packet.ts';
 import EncapsulatedPacket from "./EncapsulatedPacket.ts";
-import { BinaryStream } from "https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts";
+import type { BinaryStream } from "https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts";
 
 class DataPacket extends Packet {
      public packets: (EncapsulatedPacket|BinaryStream)[];

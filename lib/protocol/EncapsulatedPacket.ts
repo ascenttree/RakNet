@@ -1,5 +1,5 @@
 import BitFlags from './BitFlags.ts';
-import Buffer from 'https://deno.land/std/node/buffer.ts';
+import type Buffer from 'https://deno.land/std/node/buffer.ts';
 import Reliability from './Reliability.ts';
 import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
 import Packet from "./Packet.ts";

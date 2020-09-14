@@ -1,4 +1,4 @@
-import Address from "../utils/Address.ts";
+import type Address from "../utils/Address.ts";
 import Identifiers from "./Identifiers.ts";
 import OfflinePacket from "./OfflinePacket.ts";
 
