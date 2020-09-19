@@ -298,7 +298,7 @@ class Connection {
                while (i < packet.buffer.length) {
                     buffers.push([(splitIndex += 1) - 1, packet.buffer.slice(i, i += (this.mtuSize as unknown as number) - 34)]);
                }
-               let splitID: number = ++this.splitID & 65537;
+               let splitID: number = ++this.splitID & 65536;
                for (let [count, buffer] of buffers) {
                     let pk: EncapsulatedPacket = new EncapsulatedPacket();
                     pk.splitID = splitID;
