@@ -412,9 +412,9 @@ class Connection {
                          sendPacket.buffer = pk.buffer;
                          this.addToQueue(sendPacket);
                     }
-               } else if (this.state === Status.Connected) {
-                    this.listener.events.emit('encapsulatedPacket', this.address, packet);
                }
+          } else if (this.state === Status.Connected) {
+               this.listener.events.emit('encapsulatedPacket', this.address, packet);
           }
      }
 
