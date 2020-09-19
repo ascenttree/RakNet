@@ -23,11 +23,6 @@ listener.events.on('connectionCreated', (connection: Connection) => {});
 listener.events.on('connectionAccepted', (connection: Connection) => {});
 ```
 
-**`connectionKicked`** - Fired if a connection fails Connection sequence for any reason.
-```ts
-listener.events.on('connectionKicked', (address: Address, reason: string) => {});
-```
-
 **`connectionDestroyed`** - Fired when a connection is terminated, this can not be cancelled.
 ```ts
 listener.events.on('connectionDestroyed', (address: Address) => {});

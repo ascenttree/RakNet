@@ -366,8 +366,11 @@ class Connection {
 
           let id: number = packet.buffer.readUInt8();
           let dataPacket, pk, sendPacket: DataPacket|OfflinePacket|Packet|EncapsulatedPacket;
-          
           if (id < 0x80) {
+               if (id === Identifiers.DisconnectNotification) {
+                    this.disconnect('Client Disconnect');
+                    return;
+               } 
                if (this.state === Status.Connecting) {
                     if (id === Identifiers.ConnectionRequest) {
                          dataPacket = new ConnectionRequest();
@@ -394,8 +397,6 @@ class Connection {
                               this.state = Status.Connected;
                               this.listener.events.emit('connectionAccepted', this);
                          }
-                    } else if (id === Identifiers.DisconnectNotification) {
-                         this.disconnect('client disonnected');
                     } else if (id === Identifiers.ConnectedPing) {
                          dataPacket = new ConnectedPing();
                          dataPacket.buffer = packet.buffer;
@@ -459,11 +460,11 @@ class Connection {
           this.listener.sendBuffer(this.address, pk.buffer);// send to connection.
      }
 
-     public close() {
-          this.listener.events.emit('connectionDestroyed', this.address);
+     public close(reason?: string) {
           let buff: Buffer = new Buffer(convertBinaryStringToUint8Array('\x00\x00\x08\x15'));
           let stream: BinaryStream = new BinaryStream(buff);
           this.addEncapsulatedToQueue(EncapsulatedPacket.fromBinary(stream), Priority.Immediate);
+          this.listener.events.emit('connectionDestroyed', this.address, reason || "Disconnect");
      }
 }
 export default Connection;

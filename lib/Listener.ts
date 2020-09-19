@@ -76,11 +76,10 @@ class Listener {
                     const stream = new Buffer(conn[0]);
                     // Read packet header
                     let header: number = stream.readUInt8();
-                    console.log(header);
 
                     if (this.connections.has(address.token)) {
                          let connection: Connection = this.connections.get(address.token) as Connection;
-                         connection.recieve(stream);
+                         connection.recieve(new Buffer(conn[0]));
                     } else {
                          // Query
                          switch(header) {
@@ -144,6 +143,8 @@ class Listener {
                return this.sendBuffer(address, packet.buffer);
           }
 
+          this.events.emit('connectionCreated', address);
+
           packet = new OpenConnectionReplyOne();
           packet.serverGUID = this.serverId;
           packet.mtuSize = decodedPacket.mtuSize;
@@ -178,9 +179,8 @@ class Listener {
      }
 
      public closeConnection(connection: Connection, reason: string): void {
-          this.events.emit('connectionKicked', connection.address, reason);
           if (this.connections.has(connection.address.token)) {
-               connection.close();
+               connection.close(reason);
                this.connections.delete(connection.address.token);
           }
      }
