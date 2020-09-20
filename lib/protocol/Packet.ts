@@ -26,8 +26,8 @@ class Packet extends BinaryStream {
      }
 
      // Reads a string from the buffer
-     public readString() {
-          super.read(this.readShort());
+     public readString(): Buffer {
+          return super.read(this.readShort());
      }
 
      // Writes a string length + buffer 
