@@ -76,7 +76,7 @@ class Connection {
 
      public update(timestamp: number): void {
           if ((this.lastUpdate + 10000) < timestamp) {
-               this.disconnect('Timeout');
+               this.disconnect('timeout');
                return;
           }
           this.isActive = false;
@@ -138,7 +138,7 @@ class Connection {
                }
           }
 
-          //this.sendQueue();
+          this.sendQueue();
      }
 
      public disconnect(reason: string): void {
@@ -236,7 +236,7 @@ class Connection {
      }
 
      public receivePacket(packet: Packet|EncapsulatedPacket): void {
-          if (packet.messageIndex === undefined) {
+          if (typeof packet.messageIndex === 'undefined') {
                // Handle directly because theres no index. (not encapsulated)
                this.handlePacket(packet);
           } else {
@@ -252,7 +252,7 @@ class Connection {
 
                     
                     if (this.reliableWindow.size > 0) {
-                         this.reliableWindow.sort((a, b, c, d) => c - d);
+                         this.reliableWindow = this.reliableWindow.sort((a, b, c, d) => c - d);
                          for (let [seqIndex, pk] of this.reliableWindow) {
                               if ((seqIndex - this.lastReliableIndex) !== 1) {
                                    break;
@@ -298,7 +298,7 @@ class Connection {
                while (i < packet.buffer.length) {
                     buffers.push([(splitIndex += 1) - 1, packet.buffer.slice(i, i += (this.mtuSize as unknown as number) - 34)]);
                }
-               let splitID: number = ++this.splitID & 65536;
+               let splitID: number = ++this.splitID % 65536;
                for (let [count, buffer] of buffers) {
                     let pk: EncapsulatedPacket = new EncapsulatedPacket();
                     pk.splitID = splitID;
