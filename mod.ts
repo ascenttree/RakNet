@@ -17,7 +17,7 @@
  * @copyright https://github.com/RaptorsMC
  * @license RaptorsMC/CustomLicense
  */
-export const VERSION = "1.0.2";
+export const VERSION = "1.0.3";
 export * from './lib/utils/Utilities.ts';
 export { default as Address } from './lib/utils/Address.ts';
 export { default as Collection } from './lib/utils/Collection.ts';
