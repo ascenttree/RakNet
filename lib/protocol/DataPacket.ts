@@ -14,16 +14,15 @@ class DataPacket extends Packet {
           this.packets = [];
      }
 
-     // @ts-ignore
      public read(): void {
           super.read();
           this.sequenceNumber = this.readLTriad();
           while (!this.feof()) {
-               this.packets.push(EncapsulatedPacket.fromBinary((this as unknown as BinaryStream)));
+               this.packets.push(EncapsulatedPacket.fromBinary(this));
           }
+          console.log(this.packets);
      }
 
-     // @ts-ignore
      public write(): void {
           super.write();
           this.writeLTriad(this.sequenceNumber);

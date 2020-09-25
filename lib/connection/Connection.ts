@@ -39,9 +39,9 @@ class Connection {
      public ackQueue: number[] = [];
      public recoveryQueue: Map<number, DataPacket> = new Map();
      public packetToSend: DataPacket[] = [];
-     public sendQueueP = new DataPacket();
+     #sendQueue = new DataPacket();
      
-     public splitPackets = new Map();
+     #splitPackets = new Map();
 
      public windowStart: number = -1;
      public windowEnd: number = 2048;
@@ -68,7 +68,6 @@ class Connection {
           this.mtuSize = mtuSize;
           this.address = address;
           this.lastUpdate = Date.now();
-
           for (let i = 0; i < 32; i++) {
                this.channelIndex[i] = 0;
           }
@@ -149,7 +148,6 @@ class Connection {
           this.isActive = true;
           this.lastUpdate = Date.now();
           let header: number = buf.readUInt8();
-
           if ((header & BitFlags.Valid) === 0) {
                // Recieved an offline packet
                return;
@@ -237,7 +235,7 @@ class Connection {
 
      public receivePacket(packet: Packet|EncapsulatedPacket): void {
           if (typeof packet.messageIndex === 'undefined') {
-               // Handle directly because theres no index. (not encapsulated)
+               // Handle directly because theres no index.
                this.handlePacket(packet);
           } else {
                if (packet.messageIndex < this.reliableWindowStart || packet.messageIndex > this.reliableWindowEnd) {
@@ -326,7 +324,7 @@ class Connection {
 
      public addToQueue(pk: EncapsulatedPacket, flags: Priority = Priority.Normal): void {
           let priority: number = flags & 0b0000111;
-          if (pk.needACK && pk.messageIndex === undefined) {
+          if (pk.needACK && pk.messageIndex !== undefined) {
                this.needACK.set(pk.identifierACK, pk.messageIndex);
           }
           if (priority === Priority.Immediate) {
@@ -345,16 +343,16 @@ class Connection {
                return;
           }
 
-          let length: number = this.sendQueueP.length();
+          let length: number = this.#sendQueue.length();
           if (length + pk.getTotalLength() > this.mtuSize) {
                this.sendQueue();
           }
 
           if (pk.needACK) {
-               this.sendQueueP.packets.push(pk);
+               this.#sendQueue.packets.push(pk);
                pk.needACK = false;
           } else {
-               this.sendQueueP.packets.push(pk.toBinary());
+               this.#sendQueue.packets.push(pk.toBinary());
           }
      }
 
@@ -422,15 +420,15 @@ class Connection {
       * Handles packet spliting
       */
      public handleSplit(packet: EncapsulatedPacket): void {
-          if (this.splitPackets.has(packet.splitID)) {
-               let value = this.splitPackets.get(packet.splitID);
+          if (this.#splitPackets.has(packet.splitID)) {
+               let value = this.#splitPackets.get(packet.splitID);
                value.set(packet.splitIndex, packet);
-               this.splitPackets.set(packet.splitID, value);
+               this.#splitPackets.set(packet.splitID, value);
           } else {
-               this.splitPackets.set(packet.splitID, new Map([[packet.splitIndex, packet]]));
+               this.#splitPackets.set(packet.splitID, new Map([[packet.splitIndex, packet]]));
           }
 
-          let localSplits = this.splitPackets.get(packet.splitID);
+          let localSplits = this.#splitPackets.get(packet.splitID);
           if (localSplits.size === packet.splitCount) {
                let pk = new EncapsulatedPacket()
 
@@ -438,7 +436,7 @@ class Connection {
                for (let [_, packet] of localSplits) {
                     stream.append(packet.buffer);
                }
-               this.splitPackets.delete(packet.splitID);
+               this.#splitPackets.delete(packet.splitID);
 
                pk.buffer = stream.buffer;
                this.receivePacket(pk);
@@ -446,12 +444,12 @@ class Connection {
      }
 
      public sendQueue(): void {
-          if (this.sendQueueP.packets.length > 0) {
-               this.sendQueueP.sequenceNumber = this.sendSequenceNumber++;
-               this.sendPacket(this.sendQueueP);
-               this.sendQueueP.sendTime = Date.now();
-               this.recoveryQueue.set(this.sendQueueP.sequenceNumber, this.sendQueueP);
-               this.sendQueueP = new DataPacket();
+          if (this.#sendQueue.packets.length > 0) {
+               this.#sendQueue.sequenceNumber = this.sendSequenceNumber++;
+               this.sendPacket(this.#sendQueue);
+               this.#sendQueue.sendTime = Date.now();
+               this.recoveryQueue.set(this.#sendQueue.sequenceNumber, this.#sendQueue);
+               this.#sendQueue = new DataPacket();
           }
      }
 

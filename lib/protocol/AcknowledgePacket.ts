@@ -7,7 +7,6 @@ class AcknowledgePacket extends Packet {
     // or lost (NACK) packets
     public packets: number[] = []
 
-    // @ts-ignore
     public read(): void {
         super.read();
 

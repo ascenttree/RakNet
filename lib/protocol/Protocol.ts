@@ -20,5 +20,5 @@ export enum Protocol {
     UNCONNECTED_PONG = 0x1c,
     ACK = 0xc0,
     NAK = 0xa0,
-    GAME_PACKET_WRAPPER = 0xFE
+    GAME_PACKET_WRAPPER = 0x8e
 }

@@ -21,6 +21,6 @@ listener.events.on('unconnectedPing', (address: Address, motd: MOTD) => {
 })
 listener.events.on('encapsulatedPacket', (address: Address, packet: EncapsulatedPacket) => {
      console.log(`${address.token}: Sent encapsulated packet!`);
-     console.log(packet.buffer);
+     //console.log(packet.buffer);
 })
 listener.listen();

@@ -60,8 +60,6 @@ class Listener {
      public async listen(address: string = '127.0.0.1', port: number = 19132, byteLength: number = 2048): Promise<void> {
           this.address = address;
           this.port = port;
-
-          //Deno.net i need to expose this
           
           this.socket = Deno.listenDatagram({
                hostname: address,
@@ -79,7 +77,7 @@ class Listener {
 
                     if (this.connections.has(address.token)) {
                          let connection: Connection = this.connections.get(address.token) as Connection;
-                         connection.recieve(new Buffer(conn[0]));
+                         connection.recieve(stream);
                     } else {
                          // Query
                          switch(header) {

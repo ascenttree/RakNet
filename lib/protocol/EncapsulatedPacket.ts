@@ -2,7 +2,7 @@ import BitFlags from './BitFlags.ts';
 import type Buffer from 'https://deno.land/std/node/buffer.ts';
 import Reliability from './Reliability.ts';
 import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
-import Packet from "./Packet.ts";
+import type Packet from "./Packet.ts";
 
 class EncapsulatedPacket {
      public buffer!: Buffer;
@@ -18,9 +18,10 @@ class EncapsulatedPacket {
      public needACK!: boolean;
      public identifierACK!: number;
 
-     public static fromBinary(stream: BinaryStream): EncapsulatedPacket {
-          let packet: EncapsulatedPacket = new this();
+     public static fromBinary(stream: BinaryStream|Packet): EncapsulatedPacket {
+          let packet: EncapsulatedPacket = new EncapsulatedPacket();
           let header: number = stream.readByte();
+
           packet.reliability = (header & 244) >> 5;
           packet.split = (header & BitFlags.Split) > 0;
 
@@ -49,7 +50,6 @@ class EncapsulatedPacket {
                packet.splitID = stream.readShort();
                packet.splitIndex = stream.readInt();
           }
-
           packet.buffer = stream.buffer.slice(stream.offset);
           stream.offset += length;
           return packet;
