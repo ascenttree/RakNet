@@ -1,6 +1,6 @@
 import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
 import Address from '../utils/Address.ts';
-import Buffer from 'https://deno.land/std/node/buffer.ts';
+import { Buffer } from 'https://deno.land/std@0.83.0/node/buffer.ts';
 
 class Packet extends BinaryStream {
      public id: number;
@@ -30,18 +30,18 @@ class Packet extends BinaryStream {
           super.read(this.readShort());
      }
 
-     // Writes a string length + buffer 
+     // Writes a string length + buffer
      // valid only for offline packets
      public writeString(v: string) {
           this.writeShort(Buffer.byteLength(v));
           this.append(Buffer.from(v, 'utf-8'));
      }
 
-     // Reads a RakNet address passed into the buffer 
+     // Reads a RakNet address passed into the buffer
      public readAddress(): Address {
           let ver = this.readByte() || 6;
           if (ver == 4) {
-               // Read 4 bytes 
+               // Read 4 bytes
                let ipBytes = this.buffer.slice(this.offset, this.addOffset(4, true));
                let addr = `${(-ipBytes[0]-1)&0xff}.${(-ipBytes[1]-1)&0xff}.${(-ipBytes[2]-1)&0xff}.${(-ipBytes[3]-1)&0xff}`;
                let port = this.readShort();
@@ -55,7 +55,7 @@ class Packet extends BinaryStream {
                return new Address(addr, port, ver as 6);
           }
      }
-     
+
      // Writes an IPv4 address into the buffer
      // Needs to get refactored, also needs to be added support for IPv6
      public writeAddress(address: Address): void {

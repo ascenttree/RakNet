@@ -1,26 +1,26 @@
 /**
- *    ______            _                 ___  ________ 
+ *    ______            _                 ___  ________
  *    | ___ \          | |                |  \/  /  __ \
  *    | |_/ /__ _ _ __ | |_ ___  _ __ ___ | .  . | /  \/
- *    |    // _` | '_ \| __/ _ \| '__/ __|| |\/| | |    
+ *    |    // _` | '_ \| __/ _ \| '__/ __|| |\/| | |
  *    | |\ \ (_| | |_) | || (_) | |  \__ \| |  | | \__/\
  *    \_| \_\__,_| .__/ \__\___/|_|  |___/\_|  |_/\____/
- *               | |                                    
- *               |_|      
- * 
+ *               | |
+ *               |_|
+ *
  * Misuse or redistribution of this code is strictly prohibted.
  * This applies to, and is not limited to self projects and open source projects.
  * If you wish to use this projects code, please contact us.
  * © RaptorsMC 2020
- * 
+ *
  * @author RaptorsMC
  * @copyright https://github.com/RaptorsMC
  * @license RaptorsMC/CustomLicense
  */
 import Address from './utils/Address.ts';
 import Connection from './connection/Connection.ts';
-import Buffer from 'https://deno.land/std/node/buffer.ts';
-import EventEmitter from 'https://deno.land/std@0.67.0/node/events.ts';
+import { Buffer } from 'https://deno.land/std@0.83.0/node/buffer.ts';
+import EventEmitter from 'https://deno.land/std@0.83.0/node/events.ts';
 import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
 import { randomBytes } from './utils/Utilities.ts';
 import UnconnectedPing from './protocol/UnconnectedPing.ts';
@@ -60,7 +60,7 @@ class Listener {
      public async listen(address: string = '127.0.0.1', port: number = 19132, byteLength: number = 2048): Promise<void> {
           this.address = address;
           this.port = port;
-          
+
           this.socket = Deno.listenDatagram({
                hostname: address,
                port: port,
@@ -132,7 +132,7 @@ class Listener {
           if (!decodedPacket.valid) {
                return; // invalid
           }
-          
+
           if (decodedPacket.protocol !== Protocol.PROTOCOL_VERSION) {
                packet = new IncompatibleProtocolVersion();
                packet.protocol = Protocol.PROTOCOL_VERSION;
@@ -150,7 +150,7 @@ class Listener {
 
           return this.sendBuffer(address, packet.buffer);
      }
-     
+
      public async handleOpenConnectionRequest2(address: Address, buffer: Buffer): Promise<void> {
           let decodedPacket, packet: OpenConnectionRequestTwo|OpenConnectionReplyTwo;
 

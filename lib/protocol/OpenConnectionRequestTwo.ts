@@ -1,6 +1,6 @@
 import Identifiers from "./Identifiers.ts";
 import OfflinePacket from "./OfflinePacket.ts";
-import Buffer from 'https://deno.land/std/node/buffer.ts';
+import { Buffer } from 'https://deno.land/std@0.83.0/node/buffer.ts';
 import type Address from "../utils/Address.ts";
 
 class OpenConnectionRequestTwo extends OfflinePacket {

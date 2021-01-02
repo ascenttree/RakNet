@@ -4,7 +4,7 @@ import DataPacket from "../protocol/DataPacket.ts";
 import NAck from "../protocol/NAck.ts";
 import type Packet from "../protocol/Packet.ts";
 import type Address from '../utils/Address.ts';
-import Buffer from 'https://deno.land/std/node/buffer.ts';
+import { Buffer } from 'https://deno.land/std@0.83.0/node/buffer.ts';
 import BitFlags from "../protocol/BitFlags.ts";
 import EncapsulatedPacket from "../protocol/EncapsulatedPacket.ts";
 import Collection from "../utils/Collection.ts";

@@ -1,5 +1,5 @@
 import BitFlags from './BitFlags.ts';
-import type Buffer from 'https://deno.land/std/node/buffer.ts';
+import type { Buffer } from 'https://deno.land/std@0.83.0/node/buffer.ts';
 import Reliability from './Reliability.ts';
 import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
 import type Packet from "./Packet.ts";
@@ -58,14 +58,14 @@ class EncapsulatedPacket {
      public toBinary(): BinaryStream {
           let stream = new BinaryStream();
           let header = this.reliability << 5;
-          
+
           if (this.split) {
                header |= BitFlags.Split;
           }
-          
+
           stream.writeByte(header);
           stream.writeShort(this.buffer.length << 3);
-          
+
           if (Reliability.reliable(this.reliability)) {
                stream.writeLTriad(this.messageIndex);
           }

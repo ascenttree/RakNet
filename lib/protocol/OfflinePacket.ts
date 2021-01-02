@@ -1,5 +1,5 @@
 import Packet from './Packet.ts';
-import Buffer from 'https://deno.land/std/node/buffer.ts';
+import { Buffer } from 'https://deno.land/std@0.83.0/node/buffer.ts';
 import { convertBinaryStringToUint8Array } from '../utils/Utilities.ts';
 
 const MAGIC: string = '\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x12\x34\x56\x78';
