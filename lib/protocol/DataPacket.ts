@@ -19,7 +19,7 @@ class DataPacket extends Packet {
           while (!this.feof()) {
                this.packets.push(EncapsulatedPacket.fromBinary(this));
           }
-          console.log(this.packets);
+          //console.log(this.packets);
      }
 
      public write(): void {
