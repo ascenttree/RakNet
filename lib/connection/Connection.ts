@@ -364,7 +364,7 @@ class Connection {
 
           let id: number = packet.buffer.readUInt8();
           let dataPacket, pk, sendPacket: DataPacket|OfflinePacket|Packet|EncapsulatedPacket;
-          console.log(id, packet.buffer); // pro debugging
+          this.listener.events.emit('newPacket', this.address, id, packet.buffer);
           if (id < 0x80) {
                if (id === Identifiers.DisconnectNotification) {
                     this.disconnect('Client Disconnect');
