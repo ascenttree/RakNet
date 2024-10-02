@@ -1,8 +1,8 @@
 export enum Protocol {
      /* Versions */
     CURRENT_PROTOCOL = 408,
-    PROTOCOL_VERSION = 10,
-    SYSTEM_ADDRESSES = 20, // Regular is 10
+    PROTOCOL_VERSION = 6,
+    SYSTEM_ADDRESSES = 10, // Regular is 10
     /** Query and Raknet */
     CONNECTED_PING = 0x00,
     UNCONNECTED_PING = 0x01,
@@ -20,5 +20,5 @@ export enum Protocol {
     UNCONNECTED_PONG = 0x1c,
     ACK = 0xc0,
     NAK = 0xa0,
-    GAME_PACKET_WRAPPER = 0x8e
+    GAME_PACKET_WRAPPER = 0x87
 }
