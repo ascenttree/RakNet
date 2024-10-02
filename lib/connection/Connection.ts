@@ -412,7 +412,7 @@ class Connection {
                          this.addToQueue(sendPacket);
                     }
                }
-          } else if (this.state === Status.Connected) {
+          } else {
                this.listener.events.emit('encapsulatedPacket', this.address, packet);
           }
      }
