@@ -412,8 +412,8 @@ class Connection {
                          this.addToQueue(sendPacket);
                     }
                }
-          } else {
-               this.listener.events.emit('encapsulatedPacket', this.address, packet);
+          } else if (this.state === Status.Connected) {
+               this.listener.events.emit('encapsulatedPacket', this.address, packet); // why the fuck does this not send, bullshit
           }
      }
 
